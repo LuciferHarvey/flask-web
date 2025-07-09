@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - "80:80"
+    environment:
+      - MONGODB_URI=mongodb://mongo:27017/flask_blog
+      - SECRET_KEY=your-secret-key-here
+      - FLASK_ENV=development
+    depends_on:
+      - mongo
+    volumes:
+      - .:/app
+    working_dir: /app
+
+  mongo:
+    image: mongo:5.0
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    environment:
+      - MONGO_INITDB_DATABASE=flask_blog
+
+volumes:
+  mongodb_data:

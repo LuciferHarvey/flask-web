@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+
+{% block title %}Quản trị - Flask Blog{% endblock %}
+
+{% block content %}
+<h1 class="mb-4"><i class="bi bi-gear"></i> Trang quản trị</h1>
+
+<div class="row">
+    <div class="col-md-12">
+        <ul class="nav nav-tabs" id="adminTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="users-tab" data-bs-toggle="tab" data-bs-target="#users" 
+                        type="button" role="tab">
+                    <i class="bi bi-people"></i> Người dùng ({{ users|length }})
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="posts-tab" data-bs-toggle="tab" data-bs-target="#posts" 
+                        type="button" role="tab">
+                    <i class="bi bi-journal-text"></i> Bài viết ({{ posts|length }})
+                </button>
+            </li>
+        </ul>
+        
+        <div class="tab-content mt-3" id="adminTabContent">
+            <!-- Users Tab -->
+            <div class="tab-pane fade show active" id="users" role="tabpanel">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Quản lý người dùng</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Tên đăng nhập</th>
+                                        <th>Email</th>
+                                        <th>Vai trò</th>
+                                        <th>Ngày tham gia</th>
+                                        <th>Hành động</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for user in users %}
+                                    <tr>
+                                        <td>
+                                            <i class="bi bi-person-circle"></i> {{ user.username }}
+                                            {% if user._id|string == current_user.id %}
+                                            <span class="badge bg-info">Bạn</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ user.email }}</td>
+                                        <td>
+                                            {% if user.is_admin %}
+                                            <span class="badge bg-warning">Admin</span>
+                                            {% else %}
+                                            <span class="badge bg-secondary">User</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ user.created_at.strftime('%d/%m/%Y') }}</td>
+                                        <td>
+                                            {% if user._id|string != current_user.id %}
+                                            <a href="{{ url_for('admin_delete_user', user_id=user._id) }}" 
+                                               class="btn btn-danger btn-sm"
+                                               onclick="return confirm('Bạn có chắc chắn muốn xóa người dùng này và tất cả bài viết của họ?')">
+                                                <i class="bi bi-trash"></i> Xóa
+                                            </a>
+                                            {% else %}
+                                            <span class="text-muted">Không thể xóa</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Posts Tab -->
+            <div class="tab-pane fade" id="posts" role="tabpanel">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Quản lý bài viết</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Tiêu đề</th>
+                                        <th>Tác giả</th>
+                                        <th>Ngày tạo</th>
+                                        <th>Hành động</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for post in posts %}
+                                    <tr>
+                                        <td>
+                                            <a href="{{ url_for('view_post', post_id=post._id) }}" class="text-decoration-none">
+                                                {{ post.title[:50] }}{% if post.title|length > 50 %}...{% endif %}
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <i class="bi bi-person"></i> {{ post.author_name }}
+                                        </td>
+                                        <td>{{ post.created_at.strftime('%d/%m/%Y %H:%M') }}</td>
+                                        <td>
+                                            <div class="d-flex gap-1">
+                                                <a href="{{ url_for('view_post', post_id=post._id) }}" class="btn btn-primary btn-sm">
+                                                    <i class="bi bi-eye"></i>
+                                                </a>
+                                                <a href="{{ url_for('edit_post', post_id=post._id) }}" class="btn btn-warning btn-sm">
+                                                    <i class="bi bi-pencil"></i>
+                                                </a>
+                                                <a href="{{ url_for('delete_post', post_id=post._id) }}" class="btn btn-danger btn-sm"
+                                                   onclick="return confirm('Bạn có chắc chắn muốn xóa bài viết này?')">
+                                                    <i class="bi bi-trash"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <i class="bi bi-people display-4 text-primary"></i>
+                <h4>{{ users|length }}</h4>
+                <p class="card-text">Tổng người dùng</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <i class="bi bi-journal-text display-4 text-success"></i>
+                <h4>{{ posts|length }}</h4>
+                <p class="card-text">Tổng bài viết</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <i class="bi bi-person-check display-4 text-warning"></i>
+                <h4>{{ users|selectattr('is_admin')|list|length }}</h4>
+                <p class="card-text">Admin</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <i class="bi bi-calendar-date display-4 text-info"></i>
+                <h4>{{ posts|length // users|length if users|length > 0 else 0 }}</h4>
+                <p class="card-text">Bài viết / User</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
