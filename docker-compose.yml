@@ -4,7 +4,7 @@ services:
   web:
     build: .
     ports:
-      - "80:80"
+      - "8080:80"
     environment:
       - MONGODB_URI=mongodb://mongo:27017/flask_blog
       - SECRET_KEY=your-secret-key-here
