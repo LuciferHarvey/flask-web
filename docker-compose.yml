@@ -1,14 +1,9 @@
-version: '3.8'
-
 services:
   web:
     build: .
+    env_file: .env
     ports:
       - "8080:80"
-    environment:
-      - MONGODB_URI=mongodb://mongo:27017/flask_blog
-      - SECRET_KEY=your-secret-key-here
-      - FLASK_ENV=development
     depends_on:
       - mongo
     volumes:
@@ -17,6 +12,7 @@ services:
 
   mongo:
     image: mongo:5.0
+    env_file: .env
     ports:
       - "27017:27017"
     volumes:
