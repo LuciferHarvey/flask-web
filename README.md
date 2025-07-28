@@ -1,7 +1,7 @@
 # Flask Blog Application
 
 Ứng dụng blog được xây dựng bằng Flask với đầy đủ tính năng quản lý người dùng và bài viết.
-
+<->
 ## Tính năng
 
 ### Người dùng
